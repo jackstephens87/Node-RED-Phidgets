@@ -1,0 +1,79 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Alexa-Phidget-Servo',{
+        category: 'output',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+			//velocity: {value:"0"},
+			url: {value:""},
+			startingPos: {value:"0"},
+			hostAddress: {value:""},
+			portNumber: {value:""}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "alexa.png",
+        label: function() {
+            return this.name||"Alexa-Phidget-Servo";
+        }
+    });
+	
+	/*
+	function showVelocityValue(newValue) {
+		document.getElementById("range").innerHTML=newValue;
+	}
+	*/
+	function showStartingPosValue(newValue) {
+		document.getElementById("rangePos").innerHTML=newValue;
+	}
+	
+</script>
+
+<script type="text/x-red" data-template-name="Alexa-Phidget-Servo">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">		
+    </div>
+	<div class="form-row">
+        <label for="node-input-url"><i class="fa fa-globe"></i> URL</label>
+        <input id="node-input-url" type="text" placeholder="/url">
+    </div>
+	<!--
+	<div class="form-row">
+		<label for="node-input-velocity"><i class="fa fa-sliders"></i> Velocity</label>
+		<input id="node-input-velocity" style="width:300px;" type="range" min="0" max="5000" value="0" step="10" onchange="showVelocityValue(this.value)"/>
+		<span id="range">0</span>
+	</div>
+	-->
+	
+	<div class="form-row">
+		<label for="node-input-startingPos"><i class="fa fa-sliders"></i> Start Position</label>
+		<input id="node-input-startingPos" style="width:300px;" type="range" min="0" max="180" value="0" step="5" onchange="showStartingPosValue(this.value)"/>
+		<span id="rangePos">0</span>
+	</div>
+	
+	<div class="form-row">
+        <label for="node-input-hostAddress"><i class="fa fa-feed"></i> Host</label>
+        <input type="text" id="node-input-hostAddress" placeholder="127.0.0.1">		
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-portNumber"><i class="fa fa-feed"></i> Port</label>
+        <input type="text" id="node-input-portNumber" placeholder="5001">		
+    </div>
+	
+</script>
+
+<script type="text/x-red" data-help-name="Alexa-Phidget-Servo">
+    <p style="color:#666; font-weight:bold">Run the Advanced Servo Motor</p>
+	<p>This node accepts input from an Alexa device either requesting or setting position data for the Advanced Servo in the form of degrees. The corresponding commands are identified below:</p>
+	<ul>
+	<li>Ask Phidget to Set Position to {value}</li>
+	<li>Ask Phidget to Get Position</li>
+	</ul>
+	<p>The Alexa Phidget Skill will determine whether the user has issued either a Get or Set command.  A Set command will operate with a value for the position to be set at</p>
+	<p>The <b>URL</b> function allows a URL extension to be applied that is used by the Alexa Skill to send its message to.  For example entering "/alexa" into the URL field means that the https location for the Alexa Skill would be "https://domainname/alexa".</p>
+	<p>The <b>Start Position</b> function allows the user to define the position that the motor should set itself to when node-red initiates.  This has a corresponding slider to change.</p>
+	<p>The <b>Host</b> is the host name or address of the Phidgets Web Service.  This defaults to using the local connection</p>
+	<p>The <b>Port</b> is the respective port number that the Phidget Web Service is using.  This defaults to port 5001.</p>
+</script>
