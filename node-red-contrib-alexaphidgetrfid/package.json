@@ -1,0 +1,20 @@
+{
+  "name": "node-red-contrib-alexaphidgetrfid",
+  "version": "1.0.0",
+  "description": "NodeRED node to accept Alexa input to interact with a Phidget RFID",
+  "main": "AlexaPhidgetRFID.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jack Stephens",
+  "license": "ISC",
+  "dependencies": {
+    "phidgets": "*"
+  },
+  "keywords": [ "node-red" ],
+  "node-red" : {
+        "nodes": {
+            "Alexa-Phidget-RFID": "AlexaPhidgetRFID.js"
+        }
+    }
+}
