@@ -1,0 +1,20 @@
+{
+  "name": "node-red-contrib-phidgetservo",
+  "version": "1.0.0",
+  "description": "NodeRED node to accept message to interact with a Phidget Servo device",
+  "main": "PhidgetServo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jack Stephens",
+  "license": "ISC",
+  "dependencies": {
+    "phidgets": "*"
+  },
+  "keywords": [ "node-red" ],
+  "node-red" : {
+        "nodes": {
+            "Phidget-PIK": "PhidgetServo.js"
+        }
+    }
+}
