@@ -1,0 +1,128 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Phidget-Servo',{
+        category: 'output',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+			/*repeat: {value:"none"},
+			repeat_interval_count: {value:"1"},
+			repeat_interval_period: {value:"s"},
+			velocity: {value:"0"},*/
+			startingPos: {value:"0"},
+			hostAddress: {value:""},
+			portNumber: {value:""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "phidgets_logo.png",
+        label: function() {
+            return this.name||"Phidget-Servo";
+        },
+		/*oneditprepare: function() {
+			$("#node-input-repeat").change(function() {
+                var id = $("#node-input-repeat").val();
+                $(".inject-time-row").hide();
+                $("#inject-time-row-"+id).show();                
+            });
+			
+			$(".inject-time-count").spinner({
+                max:60,
+                min:1
+            });			
+		},
+		button: {
+            onclick: function() {
+				var label = "Hello Jack";                
+                var node = this;
+				var id = 1;
+                $.ajax({
+                    url: "Phidget-Servo/"+this.id,
+                    type:"POST",
+                    success: function(resp) {
+                        RED.notify(node._("Phidget-Servo.success",{label:label}),"success");
+                    },
+                    error: function(jqXHR,textStatus,errorThrown) {
+                        if (jqXHR.status == 404) {
+                            RED.notify(node._("common.notification.error1",{message:node._("common.notification.errors.not-deployed")}),"error");
+                        } else if (jqXHR.status == 500) {
+                            RED.notify(node._("common.notification.error2",{message:node._("Phidget-Servo.errors.failed")}),"error");
+                        } else if (jqXHR.status == 0) {
+                            RED.notify(node._("common.notification.error3",{message:node._("common.notification.errors.no-response")}),"error");
+                        } else {
+                            RED.notify(node._("common.notification.error4",{message:node._("common.notification.errors.unexpected",{status:jqXHR.status,message:textStatus})}),"error");
+                        }
+                    }
+                });				
+            }
+        }*/
+    });
+	
+	/*
+	function showVelocityValue(newValue) {
+		document.getElementById("range").innerHTML=newValue;
+	}
+	*/
+	function showStartingPosValue(newValue) {
+		document.getElementById("rangePos").innerHTML=newValue;
+	}
+	
+</script>
+
+<script type="text/x-red" data-template-name="Phidget-Servo">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">		
+    </div>
+	<!--
+	<div class="form-row">
+        <label for="node-input-repeat"><i class="fa fa-repeat"></i> Repeat</label>
+        <select id="node-input-repeat">
+            <option value="none">None</option>
+            <option value="interval">Interval</option>            
+        </select>
+        <input type="hidden" id="node-input-repeat">        
+    </div>
+	
+	<div class="form-row inject-time-row hidden" id="inject-time-row-interval">
+        <span>every</span>
+        <input id="node-input-repeat_interval_count" class="inject-time-count" value="1"></input>
+        <select style="width: 100px" id="node-input-repeat_interval_period">
+            <option value="s">Seconds</option>
+            <option value="m">Minutes</option>
+            <option value="h">Hours</option>
+        </select><br/>
+    </div>
+	-->
+	<!--
+	<div class="form-row">
+		<label for="node-input-velocity"><i class="fa fa-sliders"></i> Velocity</label>
+		<input id="node-input-velocity" style="width:300px;" type="range" min="0" max="5000" value="0" step="10" onchange="showVelocityValue(this.value)"/>
+		<span id="range">0</span>
+	</div>
+	-->
+	
+	<div class="form-row">
+		<label for="node-input-startingPos"><i class="fa fa-sliders"></i> Start Position</label>
+		<input id="node-input-startingPos" style="width:300px;" type="range" min="0" max="180" value="0" step="5" onchange="showStartingPosValue(this.value)"/>
+		<span id="rangePos">0</span>
+	</div>
+	
+	<div class="form-row">
+        <label for="node-input-hostAddress"><i class="fa fa-feed"></i> Host</label>
+        <input type="text" id="node-input-hostAddress" placeholder="127.0.0.1">		
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-portNumber"><i class="fa fa-feed"></i> Port</label>
+        <input type="text" id="node-input-portNumber" placeholder="5001">		
+    </div>
+	
+</script>
+
+<script type="text/x-red" data-help-name="Phidget-Servo">
+    <p style="color:#666; font-weight:bold">Run the Advanced Servo Motor</p>
+	<p>This node accepts messages holding position data for the Advanced Servo in the form of degrees.  This information is delivered to the phidget to turn the motor to that position.</p>
+	<p>The <b>Start Position</b> function allows the user to define the position that the motor should set itself to when node-red initiates.  This has a corresponding slider to change.</p>
+	<p>The <b>Host</b> is the host name or address of the Phidgets Web Service.  This defaults to using the local connection</p>
+	<p>The <b>Port</b> is the respective port number that the Phidget Web Service is using.  This defaults to port 5001.</p>
+</script>

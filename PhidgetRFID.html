@@ -1,0 +1,109 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Phidget-RFID',{
+        category: 'input',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+			repeat: {value:"none"},
+			repeat_interval_count: {value:"1"},
+			repeat_interval_period: {value:"s"},			
+			hostAddress: {value:""},
+			portNumber: {value:""}
+        },
+        inputs:0,
+        outputs:2,
+        icon: "phidgets_logo.png",
+        label: function() {
+            return this.name||"Phidget-RFID";
+        },
+		oneditprepare: function() {
+			$("#node-input-repeat").change(function() {
+                var id = $("#node-input-repeat").val();
+                $(".inject-time-row").hide();
+                $("#inject-time-row-"+id).show();                
+            });
+			
+			$(".inject-time-count").spinner({
+                max:60,
+                min:1
+            });
+			
+		},
+		button: {
+            onclick: function() {
+				var label = "Hello Jack";                
+                var node = this;
+				var id = 1;
+                $.ajax({
+                    url: "Phidget-RFID/"+this.id,
+                    type:"POST",
+                    success: function(resp) {
+                        RED.notify(node._("Phidget-RFID.success",{label:label}),"success");
+                    },
+                    error: function(jqXHR,textStatus,errorThrown) {
+                        if (jqXHR.status == 404) {
+                            RED.notify(node._("common.notification.error1",{message:node._("common.notification.errors.not-deployed")}),"error");
+                        } else if (jqXHR.status == 500) {
+                            RED.notify(node._("common.notification.error2",{message:node._("Phidget-RFID.errors.failed")}),"error");
+                        } else if (jqXHR.status == 0) {
+                            RED.notify(node._("common.notification.error3",{message:node._("common.notification.errors.no-response")}),"error");
+                        } else {
+                            RED.notify(node._("common.notification.error4",{message:node._("common.notification.errors.unexpected",{status:jqXHR.status,message:textStatus})}),"error");
+                        }
+                    }
+                });				
+            }
+        }
+    });	
+	
+</script>
+
+<script type="text/x-red" data-template-name="Phidget-RFID">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">		
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-repeat"><i class="fa fa-repeat"></i> Repeat</label>
+        <select id="node-input-repeat">
+            <option value="none">None</option>
+            <option value="interval">Interval</option>            
+        </select>
+        <input type="hidden" id="node-input-repeat">        
+    </div>
+	
+	<div class="form-row inject-time-row hidden" id="inject-time-row-interval">
+        <span>every</span>
+        <input id="node-input-repeat_interval_count" class="inject-time-count" value="1"></input>
+        <select style="width: 100px" id="node-input-repeat_interval_period">
+            <option value="s">Seconds</option>
+            <option value="m">Minutes</option>
+            <option value="h">Hours</option>
+        </select><br/>
+    </div>		
+	
+	<div class="form-row">
+        <label for="node-input-hostAddress"><i class="fa fa-feed"></i> Host</label>
+        <input type="text" id="node-input-hostAddress" placeholder="127.0.0.1">		
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-portNumber"><i class="fa fa-feed"></i> Port</label>
+        <input type="text" id="node-input-portNumber" placeholder="5001">		
+    </div>
+	
+</script>
+
+<script type="text/x-red" data-help-name="Phidget-RFID">
+    <p style="color:#666; font-weight:bold">Get Data from the Phidget RFID</p>
+	<p>Pressing the button on the left side of the node requests the status of the Output ports, and information regarding the last known tag.  This information is output as 2 separate messages:</p>
+	<ol>
+		<li>Tag</li>
+		<li>Digital Output</li>
+	</ol>    
+    <p>The <b>Repeat</b> function allows the payload of each respective message to be sent on the required schedule.</p>
+	<p>The <b>Host</b> is the host name or address of the Phidgets Web Service.  This defaults to using the local connection</p>
+	<p>The <b>Port</b> is the respective port number that the Phidget Web Service is using.  This defaults to port 5001.</p>
+	<p>When a tag is sensed by the RFID phidget, the tag value and detection time are sent in the first message payload.  Once this tag is removed another payload is sent with the same tag details, but will also contain a detection lost time.</p>	
+</script>
