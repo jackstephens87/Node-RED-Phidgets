@@ -1,0 +1,164 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Alexa-Phidget-PIK',{
+        category: 'input',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+			url: {value:""},
+			repeat: {value:"none"},
+			repeat_interval_count: {value:"1"},
+			repeat_interval_period: {value:"s"},
+			data_trigger: {value:"sensitivity"},
+			dataRate: {value:"16"},
+			sensitivity: {value:"10"},
+			hostAddress: {value:""},
+			portNumber: {value:""}
+        },
+        inputs:0,
+        outputs:3,
+        icon: "alexa.png",
+        label: function() {
+            return this.name||"Alexa-Phidget-PIK";
+        },
+		oneditprepare: function() {
+			$("#node-input-repeat").change(function() {
+                var id = $("#node-input-repeat").val();
+                $(".inject-time-row").hide();
+                $("#inject-time-row-"+id).show();                
+            });
+			
+			$(".inject-time-count").spinner({
+                max:60,
+                min:1
+            });
+			
+			$("#node-input-data_trigger").change(function() {
+                var id = $("#node-input-data_trigger").val();
+                $(".data_trigger-row").hide();
+                $("#data_trigger-row-"+id).show();                
+            });
+		},
+		button: {
+            onclick: function() {
+				var label = "Hello Jack";                
+                var node = this;
+				var id = 1;
+                $.ajax({
+                    url: "Alexa-Phidget-PIK/"+this.id,
+                    type:"POST",
+                    success: function(resp) {
+                        RED.notify(node._("Alexa-Phidget-PIK.success",{label:label}),"success");
+                    },
+                    error: function(jqXHR,textStatus,errorThrown) {
+                        if (jqXHR.status == 404) {
+                            RED.notify(node._("common.notification.error1",{message:node._("common.notification.errors.not-deployed")}),"error");
+                        } else if (jqXHR.status == 500) {
+                            RED.notify(node._("common.notification.error2",{message:node._("Alexa-Phidget-PIK.errors.failed")}),"error");
+                        } else if (jqXHR.status == 0) {
+                            RED.notify(node._("common.notification.error3",{message:node._("common.notification.errors.no-response")}),"error");
+                        } else {
+                            RED.notify(node._("common.notification.error4",{message:node._("common.notification.errors.unexpected",{status:jqXHR.status,message:textStatus})}),"error");
+                        }
+                    }
+                });				
+            }
+        }
+    });
+	
+	function showSensitivityValue(newValue) {
+		document.getElementById("range").innerHTML=newValue;
+	}
+	
+	function showDataRateValue(newValue) {
+		document.getElementById("rangeRate").innerHTML=newValue;
+	}
+</script>
+
+<script type="text/x-red" data-template-name="Alexa-Phidget-PIK">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">		
+    </div>
+	<div class="form-row">
+        <label for="node-input-url"><i class="fa fa-globe"></i> URL</label>
+        <input id="node-input-url" type="text" placeholder="/url">
+    </div>
+	<div class="form-row">
+        <label for="node-input-repeat"><i class="fa fa-repeat"></i> Repeat</label>
+        <select id="node-input-repeat">
+            <option value="none">None</option>
+            <option value="interval">Interval</option>            
+        </select>
+        <input type="hidden" id="node-input-repeat">        
+    </div>
+	
+	<div class="form-row inject-time-row hidden" id="inject-time-row-interval">
+        <span>every</span>
+        <input id="node-input-repeat_interval_count" class="inject-time-count" value="1"></input>
+        <select style="width: 100px" id="node-input-repeat_interval_period">
+            <option value="s">Seconds</option>
+            <option value="m">Minutes</option>
+            <option value="h">Hours</option>
+        </select><br/>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-data_trigger"><i class="fa fa-sliders"></i> Data Trigger</label>
+        <select id="node-input-data_trigger">
+            <option value="sensitivity">Sensitivity</option>
+            <option value="dataRate">Data Rate</option>
+        </select>
+        <input type="hidden" id="node-input-data_trigger">        
+    </div>
+	
+	<div class="form-row data_trigger-row" id="data_trigger-row-sensitivity">
+		<label for="node-input-sensitivity"><i class="fa fa-sliders"></i> Sensitivity</label>
+		<input id="node-input-sensitivity" style="width:300px;" type="range" min="0" max="1000" value="10" step="10" onchange="showSensitivityValue(this.value)"/>
+		<span id="range">10</span>
+	</div>
+	
+	<div class="form-row data_trigger-row hidden" id="data_trigger-row-dataRate">
+		<label for="node-input-dataRate"><i class="fa fa-sliders"></i> Data Rate</label>
+		<input id="node-input-dataRate" style="width:300px;" type="range" min="16" max="1000" value="16" step="10" onchange="showDataRateValue(this.value)"/>
+		<span id="rangeRate">16</span>
+	</div>
+	
+	<div class="form-row">
+        <label for="node-input-hostAddress"><i class="fa fa-feed"></i> Host</label>
+        <input type="text" id="node-input-hostAddress" placeholder="127.0.0.1">		
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-portNumber"><i class="fa fa-feed"></i> Port</label>
+        <input type="text" id="node-input-portNumber" placeholder="5001">		
+    </div>
+	
+</script>
+
+<script type="text/x-red" data-help-name="Alexa-Phidget-PIK">
+    <p style="color:#666; font-weight:bold">Get Data from the Phidget Interface Kit</p>
+	<p>This node accepts input from an Alexa device either requesting digital/analogue input or digital output data, or setting a digital output value for the PIK.  The corresponding commands are identified below:</p>
+	<ul>
+	<li>Ask PIK to Set output to ON/OFF</li>
+	<li>Ask PIK to Set output 0/1 to ON/OFF</li>
+	<li>Ask PIK to Get status of LED</li>
+	<li>Ask PIK to Get status of LED 0/1</li>
+	<li>Ask PIK to Get Last Tag</li>
+	</ul>
+	<p>The Alexa Phidget Skill will determine whether the user has issued either a Get or Set command.  A Set command will operate with a value for the LED to be turned ON/OFF</p>
+	<p>Pressing the button on the left side of the node requests the status of the Digital Input/Output ports, and information regarding any connected Analogue Input devices.  This information is output as 3 separate messages:</p>
+	<ol>
+		<li>Analogue Input</li>
+		<li>Digital Input</li>
+		<li>Digital Output</li>
+	</ol>    
+    <p>The <b>Repeat</b> function allows the payload of each respective message to be sent on the required schedule.</p>
+	<p>The <b>Data Trigger</b> function allows the user to set either the Sensitivity or the Data Rate of the sensors.  This has a corresponding slider to change:</p>
+	<ul>
+		<li>Sensitivity - a number between 0 to 1000</li>
+		<li>Data Rate - a count in milliseconds ranging from 16ms to 1000ms</li>
+	</ul>
+	<p>The <b>Host</b> is the host name or address of the Phidgets Web Service.  This defaults to using the local connection</p>
+	<p>The <b>Port</b> is the respective port number that the Phidget Web Service is using.  This defaults to port 5001.</p>
+	<p>Any changes to the status of the Digital Inputs or Analogue Inputs will result in the corresponding message being sent with the new status details.</p>
+</script>
