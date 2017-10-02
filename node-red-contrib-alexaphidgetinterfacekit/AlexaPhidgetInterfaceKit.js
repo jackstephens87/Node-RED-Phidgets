@@ -49,59 +49,7 @@ module.exports = function(RED) {
     }
 
     var corsSetup = false;
-
-    function createRequestWrapper(node,req) {
-        // This misses a bunch of properties (eg headers). Before we use this function
-        // need to ensure it captures everything documented by Express and HTTP modules.
-        var wrapper = {
-            _req: req
-        };
-        var toWrap = [
-            "param",
-            "get",
-            "is",
-            "acceptsCharset",
-            "acceptsLanguage",
-            "app",
-            "baseUrl",
-            "body",
-            "cookies",
-            "fresh",
-            "hostname",
-            "ip",
-            "ips",
-            "originalUrl",
-            "params",
-            "path",
-            "protocol",
-            "query",
-            "route",
-            "secure",
-            "signedCookies",
-            "stale",
-            "subdomains",
-            "xhr",
-            "socket" // TODO: tidy this up
-        ];
-        toWrap.forEach(function(f) {
-            if (typeof req[f] === "function") {
-                wrapper[f] = function() {
-                    node.warn(RED._("httpin.errors.deprecated-call",{method:"msg.req."+f}));
-                    var result = req[f].apply(req,arguments);
-                    if (result === req) {
-                        return wrapper;
-                    } else {
-                        return result;
-                    }
-                }
-            } else {
-                wrapper[f] = req[f];
-            }
-        });
-
-
-        return wrapper;
-    }
+	
     function createResponseWrapper(node,res) {
         var wrapper = {
             _res: res
